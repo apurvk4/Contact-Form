@@ -1,6 +1,6 @@
 {
   "rewrites": [{ "source": "/(.*)", "destination": "/" }],
-  "outputDirectory": "public",
+  "outputDirectory": "dist",
   "headers": [
     {
       "source": "/(.*)",
