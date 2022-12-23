@@ -1,0 +1,15 @@
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "outputDirectory": "public",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-robots-tag",
+          "value": "undefined"
+        }
+      ]
+    }
+  ]
+}
