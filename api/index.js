@@ -19,7 +19,10 @@ global.__basedir = __dirname;
 const app = express();
 connect(); // connect to db
 function corsMiddleWare(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://contact-form-bz3e.vercel.app"
+  );
   res.removeHeader("X-powered-by");
   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PATCH,POST,DELETE");
   res.setHeader("Access-Control-Allow-Credentials", "true");
