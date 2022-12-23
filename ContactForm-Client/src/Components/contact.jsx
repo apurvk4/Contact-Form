@@ -1,6 +1,5 @@
 import "../index.css";
 import Modal from "./Modal/Modal";
-import Input from "./Input/Input";
 import { useState } from "react";
 import { useContext } from "react";
 import UserContext from "../contexts/userContext";
@@ -9,25 +8,11 @@ import { useNavigate } from "react-router-dom";
 
 const Contact = () => {
   const { loggedIn, data, logout } = useContext(UserContext);
-  const [name, setName] = useState({
-    isValid: true,
-    message: "",
-    data: "",
-  });
-  const [phone, setPhone] = useState({
-    isValid: true,
-    message: "",
-    data: "",
-  });
-  const [email, setEmail] = useState({
-    isValid: true,
-    message: "",
-    data: "",
-  });
-  const [url, setUrl] = useState({
-    isValid: true,
-    message: "",
-    data: "",
+  const [fileSelected, setFileSelected] = useState({
+    status: false,
+    name: "",
+    type: "",
+    file: null,
   });
   const navigate = useNavigate();
   useEffect(() => {
@@ -35,61 +20,23 @@ const Contact = () => {
       navigate("/");
     }
   }, [loggedIn]);
-  function checkName() {
-    let val = name.data;
-    if (val.length <= 4) {
-      setName({ ...name, isValid: false, message: "Name is too short" });
-      return;
-    }
-    setName({ ...name, isValid: true, message: "name is valid" });
-  }
-  function checkPhone() {
-    let val = String(email.data).match(
-      /^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})$/
-    );
-    if (val) {
-      setPhone({ ...phone, isValid: true, message: "valid Phone Number" });
-    } else {
-      setPhone({ ...phone, isValid: false, message: "Invalid Phone Number" });
-    }
-  }
-  function checkEmail() {
-    let val = String(email.data)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-    if (!val) {
-      setEmail({ ...email, isValid: false, message: "Invalid Email" });
-    } else {
-      setEmail({ ...email, isValid: true, message: "Valid Email" });
-    }
-  }
-  function checkUrl() {
-    try {
-      const val = new URL(url.data);
-      if (val.host === "linkedin.com") {
-        setUrl({ ...url, isValid: true, message: "Url Is Valid" });
-      } else {
-        setUrl({
-          ...url,
-          isValid: false,
-          message: "invalid url or url doesnot belong to linkedin",
-        });
-      }
-    } catch (err) {
-      setUrl({
-        ...url,
-        isValid: false,
-        message: err.message,
-      });
-    }
-  }
   async function submit() {
-    checkEmail();
-    checkName();
-    checkPhone();
-    checkUrl();
+    if (fileSelected.status) {
+      const url = import.meta.env.VITE_DEPLOYMENT + "/api/import";
+      let data = new FormData();
+      data.append("file", fileSelected.file);
+      let res = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        body: data,
+      });
+      if (res.status === 200) {
+        alert("file uploaded");
+      } else {
+        res = await res.json();
+        alert(res.message);
+      }
+    }
   }
   async function logoutUser() {
     const url = import.meta.env.VITE_DEPLOYMENT + "/api/logout";
@@ -118,6 +65,7 @@ const Contact = () => {
           >
             Hello {data.name}
           </span>
+          <button onClick={() => navigate("/list")}>List Contacts</button>
           <button style={{ maxHeight: "53px" }} onClick={logoutUser}>
             Logout
           </button>
@@ -139,7 +87,7 @@ const Contact = () => {
                 fontSize: "35px",
               }}
             >
-              Contact Form
+              Import Contacts
             </p>
             <div
               style={{
@@ -167,78 +115,59 @@ const Contact = () => {
                 }}
               ></span>
             </div>
+            <div
+              style={{
+                width: "300px",
+                display: "flex",
+                flexDirection: "column",
+                marginTop: "15px",
+                height: "60px",
+                borderRadius: "10px",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "var(--default-border)",
+                fontSize: "18px",
+              }}
+              role="button"
+              onClick={(e) => {
+                let inp = e.currentTarget.firstElementChild;
+                inp.click();
+              }}
+            >
+              <input
+                type="file"
+                style={{ display: "none" }}
+                accept="csv, text/csv"
+                onChange={(e) => {
+                  e.stopPropagation();
+                  let file = e.target.files[0];
+                  setFileSelected({
+                    status: true,
+                    name: file.name,
+                    type: file.type,
+                    file: file,
+                  });
+                }}
+              />
+              <span
+                style={{
+                  fontSize: "18px",
+                }}
+              >
+                {fileSelected.status ? fileSelected.name : "Upload CSV File"}
+              </span>
+            </div>
 
-            <Input
-              invalidText={name.message}
-              isValid={name.isValid}
-              placeholder={"Name"}
-              label="Name"
-              type={"text"}
-              value={name.data}
-              onInput={(e) => {
-                setName({ ...name, data: e.target.value });
-              }}
-              onBlur={(e) => {
-                checkName();
-              }}
-            />
-            <Input
-              invalidText={phone.message}
-              isValid={phone.isValid}
-              placeholder={"Phone"}
-              label="Phone"
-              type={"text"}
-              value={phone.data}
-              onInput={(e) => {
-                setPhone({ ...phone, data: e.target.value });
-              }}
-              onBlur={(e) => {
-                checkPhone();
-              }}
-            />
-            <Input
-              invalidText={email.message}
-              isValid={email.isValid}
-              placeholder={"Email"}
-              label="Email"
-              type={"email"}
-              value={email.data}
-              onInput={(e) => {
-                setEmail({ ...email, data: e.target.value });
-              }}
-              onBlur={() => {
-                checkEmail();
-              }}
-            />
-            <Input
-              invalidText={url.message}
-              isValid={url.isValid}
-              placeholder={"LinkedIn Id"}
-              label="LinkedIn Id"
-              type={"url"}
-              value={url.data}
-              onInput={(e) => {
-                setUrl({ ...url, data: e.target.value });
-              }}
-              onBlur={() => {
-                checkUrl();
-              }}
-            />
             <button
               className="loginnext"
               type="submit"
-              disabled={
-                !name.isValid ||
-                !phone.isValid ||
-                !email.isValid ||
-                !url.isValid
-              }
+              disabled={!fileSelected.status}
               onClick={(e) => {
                 e.preventDefault();
                 submit();
               }}
             >
-              Submit
+              Import
             </button>
           </div>
         </form>

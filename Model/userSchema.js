@@ -23,7 +23,6 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: [true, "email is required"],
-      unique: [true, "${VALUE} is already present"],
     },
     password: {
       type: String,
@@ -35,6 +34,30 @@ const userSchema = new Schema(
         token: {
           type: String,
           required: true,
+        },
+      },
+    ],
+    contacts: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        email: {
+          type: String,
+          required: true,
+        },
+        phone: {
+          type: Number,
+          required: true,
+        },
+        "linkedin url": {
+          type: String,
+          required: true,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],

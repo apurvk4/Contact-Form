@@ -12,8 +12,10 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 var ObjectId = mongoose.Schema.Types.ObjectId;
 const user_email_verify = require("./emailVerify");
+const importContacts = require("./importContacts");
 // const userRouter = require("../routes/userRoute");
 // const tweetRouter = require("../routes/tweetRoute");
+global.__basedir = __dirname;
 const app = express();
 connect(); // connect to db
 function corsMiddleWare(req, res, next) {
@@ -142,6 +144,49 @@ app.get("/api/logout", verify, async (req, res) => {
   }
 });
 app.get("/api/verifyemail/:mail", user_email_verify);
+app.post("/api/import", verify, importContacts);
+app.get("/api/contacts", verify, async (req, res) => {
+  try {
+    let limit = 10;
+    let skip = 0;
+    if (req.query.limit) {
+      let l = Number.parseInt(req.query.limit);
+      if (Number.isInteger(l)) {
+        limit = l;
+      }
+    }
+    if (req.query.skip) {
+      let s = Number.parseInt(req.query.skip);
+      if (Number.isInteger(s)) {
+        skip = s;
+      }
+    }
+    let items = await User.aggregate([
+      { $match: { _id: req.rootID } },
+      { $unwind: "$contacts" },
+      { $sort: { date: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          name: 0,
+          email: 0,
+          phone: 0,
+          _id: 0,
+          password: 0,
+          tokens: 0,
+          creadedAt: 0,
+          updatedAt: 0,
+          __v: 0,
+        },
+      },
+    ]);
+    items = items.map((item) => item.contacts);
+    res.status(200).send(items);
+  } catch (err) {
+    res.status(400).send(handleError(err));
+  }
+});
 // app.use("/api/user", userRouter);
 // app.use("/api/tweet", tweetRouter);
 // app.use(express.static("./public"));

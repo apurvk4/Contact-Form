@@ -22,7 +22,7 @@
   height: 100%;
 }
 .container0 {
-  width: 600px;
+  min-width: 600px;
   max-height: 100vh;
   position: absolute;
   top: 50%;

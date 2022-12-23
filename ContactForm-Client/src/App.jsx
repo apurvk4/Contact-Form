@@ -1,11 +1,10 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useState, useEffect, useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loading from "./Components/Loading/Loading";
-// import reactLogo from "./assets/react.svg";
-import "./App.css";
-import { useEffect } from "react";
-import { useContext } from "react";
 import UserContext from "./contexts/userContext";
+import Table from "./Components/Table/Table";
+import "./App.css";
+// const Table = lazy(import("./Components/Table/Table"));
 const Contact = lazy(() => import("./Components/contact"));
 const Login = lazy(() => import("./Components/Login"));
 const Singup = lazy(() => import("./Components/Signup"));
@@ -70,6 +69,7 @@ function App() {
                 </Suspense>
               }
             />
+            <Route path="/list" element={<Table />} />
           </Routes>
         </div>
       )}
