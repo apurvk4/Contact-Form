@@ -1,0 +1,7 @@
+.input {
+  border: 3px solid var(--default-border);
+}
+
+.input:focus-within {
+  border: 3px solid var(--accent-color);
+}
