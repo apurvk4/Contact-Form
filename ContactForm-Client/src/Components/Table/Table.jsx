@@ -119,7 +119,7 @@ const Table = () => {
           >
             Hello {data.name}
           </span>
-          <button onClick={() => navigate("/list")}>Contacts</button>
+          <button onClick={() => navigate("/contact")}>Import</button>
           <button style={{ maxHeight: "53px" }} onClick={logoutUser}>
             Logout
           </button>
