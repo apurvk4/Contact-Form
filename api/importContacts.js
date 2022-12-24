@@ -1,17 +1,11 @@
 const mongoose = require("mongoose");
 const fileUpload = require("../Middleware/fileUpload");
 const { parse } = require("csv-parse");
+const util = require("util");
 // const getStream = require("get-stream");
 const fs = require("fs");
 const User = require("../Model/userSchema");
-// readCSVData = async (fileName) => {
-//   console.log(filePath);
-//   const parseStream = parse({ delimiter: "," });
-//   const data = await getStream.array(
-//     fs.createReadStream(filePath).pipe(parseStream)
-//   );
-//   return data.map((line) => line.join(",")).join("\n");
-// };
+const removeFile = util.promisify(fs.unlink);
 function readCsv(fileName, read, close) {
   try {
     const filePath = __basedir + "/uploads/" + fileName;
@@ -22,7 +16,7 @@ function readCsv(fileName, read, close) {
       read(row);
     });
     parser.on("end", () => {
-      close();
+      close(fileName);
     });
   } catch (err) {
     console.log(err);
@@ -37,10 +31,11 @@ const importContacts = async (req, res) => {
     }
     const conn = mongoose.connection;
     var session = await conn.startSession();
+    let fname = req.file.filename;
     await session.withTransaction(async () => {
       let values = [];
       readCsv(
-        req.file.filename,
+        fname,
         async (data) => {
           await User.bulkWrite([
             {
@@ -55,14 +50,12 @@ const importContacts = async (req, res) => {
             },
           ]);
         },
-        () => {
+        async (name) => {
           res.status(200).send({
-            message:
-              "The following file was uploaded successfully: " +
-              req.file.filename,
+            message: "The following file was uploaded successfully: " + name,
           });
-          const filePath = __basedir + "/uploads/" + req.file.fileName;
-          fs.unlink(filePath);
+          const filePath = __basedir + "/uploads/" + name;
+          await removeFile(filePath);
         }
       );
     });
