@@ -61,7 +61,7 @@ const Contact = () => {
         <div className="nav">
           <span
             className="nav-data"
-            style={{ fontWeight: "700", fontSize: "30px" }}
+            style={{ fontWeight: "700", fontSize: "30px", height: "30px" }}
           >
             Hello {data.name}
           </span>
