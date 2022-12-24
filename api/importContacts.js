@@ -61,6 +61,8 @@ const importContacts = async (req, res) => {
               "The following file was uploaded successfully: " +
               req.file.filename,
           });
+          const filePath = __basedir + "/uploads/" + req.file.fileName;
+          fs.unlink(filePath);
         }
       );
     });
