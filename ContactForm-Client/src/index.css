@@ -219,7 +219,9 @@ td,th{
     padding-right: 0;
   }
 }
-
+div[role=button]{
+  cursor: pointer;
+}
 /* body {
   padding: 0 2em;
   font-family: Montserrat, sans-serif;
