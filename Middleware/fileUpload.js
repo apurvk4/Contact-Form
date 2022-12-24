@@ -1,7 +1,7 @@
 const util = require("util");
 const multer = require("multer");
 const maxSize = 2 * 1024 * 1024;
-function geneateName(length) {
+function generateName(length) {
   var result = "";
   var characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -17,7 +17,7 @@ let storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     console.log(file.originalname);
-    cb(null, "sample.csv");
+    cb(null, generateName(8));
   },
 });
 
