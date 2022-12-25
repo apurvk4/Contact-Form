@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const connect = require("../Model/db");
-const path = require("path");
 const cookieParser = require("cookie-parser");
 const { json } = require("body-parser");
 const verify = require("../Middleware/verify");
@@ -13,9 +12,10 @@ const mongoose = require("mongoose");
 var ObjectId = mongoose.Schema.Types.ObjectId;
 const user_email_verify = require("./emailVerify");
 const importContacts = require("./importContacts");
+const { join } = require("path");
 // const userRouter = require("../routes/userRoute");
 // const tweetRouter = require("../routes/tweetRoute");
-global.__basedir = __dirname;
+global.__upload = join(__dirname, "..");
 const app = express();
 connect(); // connect to db
 function corsMiddleWare(req, res, next) {

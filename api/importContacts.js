@@ -5,10 +5,11 @@ const util = require("util");
 // const getStream = require("get-stream");
 const fs = require("fs");
 const User = require("../Model/userSchema");
+const { join } = require("path");
 const removeFile = util.promisify(fs.unlink);
 function readCsv(fileName, read, close) {
   try {
-    const filePath = __basedir + "/uploads/" + fileName;
+    const filePath = join(__upload, "tmp", fileName);
     const parser = fs
       .createReadStream(filePath)
       .pipe(parse({ delimiter: ",", columns: true }));
@@ -54,8 +55,8 @@ const importContacts = async (req, res) => {
           res.status(200).send({
             message: "The following file was uploaded successfully: " + name,
           });
-          const filePath = __basedir + "/uploads/" + name;
-          await removeFile(filePath);
+          const filePath = join(__upload, "tmp", name);
+          // await removeFile(filePath);
         }
       );
     });

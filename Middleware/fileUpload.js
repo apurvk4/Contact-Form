@@ -1,5 +1,6 @@
 const util = require("util");
 const multer = require("multer");
+const { join } = require("path");
 const maxSize = 2 * 1024 * 1024;
 function generateName(length) {
   var result = "";
@@ -13,7 +14,7 @@ function generateName(length) {
 }
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, __basedir + "/uploads/");
+    cb(null, join(__upload, "tmp"));
   },
   filename: (req, file, cb) => {
     console.log(file.originalname);
