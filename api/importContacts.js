@@ -28,7 +28,7 @@ const importContacts = async (req, res) => {
     }
     const conn = mongoose.connection;
     var session = await conn.startSession();
-    let fname = req.file.filename;
+    var fname = req.file.filename;
     await session.withTransaction(async () => {
       let values = [];
       readCsv(
@@ -64,7 +64,7 @@ const importContacts = async (req, res) => {
       });
     }
     res.status(500).send({
-      message: `Unable to upload the file: ${req.file.filename}. ${err}`,
+      message: `Unable to upload the file: ${fname}. ${err}`,
     });
     // await session.endSession();
   }
