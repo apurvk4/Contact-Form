@@ -8,20 +8,16 @@ const User = require("../Model/userSchema");
 const { join } = require("path");
 const removeFile = util.promisify(fs.unlink);
 function readCsv(fileName, read, close) {
-  try {
-    const filePath = join(__upload, "tmp", fileName);
-    const parser = fs
-      .createReadStream(filePath)
-      .pipe(parse({ delimiter: ",", columns: true }));
-    parser.on("data", (row) => {
-      read(row);
-    });
-    parser.on("end", () => {
-      close(fileName);
-    });
-  } catch (err) {
-    console.log(err);
-  }
+  const filePath = join(__upload, "tmp", fileName);
+  const parser = fs
+    .createReadStream(filePath)
+    .pipe(parse({ delimiter: ",", columns: true }));
+  parser.on("data", (row) => {
+    read(row);
+  });
+  parser.on("end", () => {
+    close(fileName);
+  });
 }
 
 const importContacts = async (req, res) => {
@@ -56,7 +52,7 @@ const importContacts = async (req, res) => {
             message: "The following file was uploaded successfully: " + name,
           });
           const filePath = join(__upload, "tmp", name);
-          // await removeFile(filePath);
+          await removeFile(filePath);
         }
       );
     });
