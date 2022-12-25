@@ -13,16 +13,14 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 const user_email_verify = require("./emailVerify");
 const importContacts = require("./importContacts");
 const { join } = require("path");
+const uploadFile = require("../Middleware/fileUpload");
 // const userRouter = require("../routes/userRoute");
 // const tweetRouter = require("../routes/tweetRoute");
 global.__upload = join(__dirname, "..");
 const app = express();
 connect(); // connect to db
 function corsMiddleWare(req, res, next) {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://contact-form-bz3e.vercel.app"
-  );
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.removeHeader("X-powered-by");
   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PATCH,POST,DELETE");
   res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -147,7 +145,7 @@ app.get("/api/logout", verify, async (req, res) => {
   }
 });
 app.get("/api/verifyemail/:mail", user_email_verify);
-app.post("/api/import", verify, importContacts);
+app.post("/api/import", verify, uploadFile, importContacts);
 app.get("/api/contacts", verify, async (req, res) => {
   try {
     let limit = 10;

@@ -26,5 +26,4 @@ let uploadFile = multer({
   storage: storage,
   limits: { fileSize: maxSize },
 }).single("file");
-let uploadFileMiddleware = util.promisify(uploadFile);
-module.exports = uploadFileMiddleware;
+module.exports = uploadFile;

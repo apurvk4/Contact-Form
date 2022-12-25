@@ -22,7 +22,6 @@ function readCsv(fileName, read, close) {
 
 const importContacts = async (req, res) => {
   try {
-    await fileUpload(req, res);
     if (typeof req.file == "undefined") {
       return res.status(400).send({ message: "Upload a file please!" });
     }
